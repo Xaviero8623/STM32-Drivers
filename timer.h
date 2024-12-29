@@ -2,15 +2,18 @@
 
 
 // while any timer can be used, it is preferred for usability to rely on timers 16 or 17
-void Delay_Micros(int timer, int micros);
+void Timer_Delay_Micros(int timer, int micros);
 
 // delay function using timer 17 in milliseconds
-void Delay(int millis);
+ void Delay(int millis);
 
 // delay function using user specified timer in milliseconds
-void Delay_Millis(int timer, int millis);
+void Timer_Delay_Millis(int timer, int millis);
 
 // Timer interrupt functions
+
+// SysTick Timer
+void SysTickInterrupt(int load);
 
 // use for starting interrupt every however many micro/milli seconds
 void USInterrupt(int timer, int micros);
