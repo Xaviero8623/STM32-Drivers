@@ -5,6 +5,8 @@
 //timer functions
 
 
+
+
 TIM_TypeDef * get_timer(int timer) {
 	TIM_TypeDef * tim;
 	switch(timer) {
@@ -40,7 +42,7 @@ TIM_TypeDef * UStimerInit(int timer, int micros) {
 	// initialize counter to start at 0
 	tim -> CNT = 0;
 	
-	// Set prescale value to 72, divide clock by 72
+	// Set prescale value to 8, divide clock by 8
 	tim -> PSC = prescalar;
 	
 	// Initialize the Auto reload value
@@ -71,7 +73,7 @@ TIM_TypeDef * MStimerInit(int timer, int millis) {
 	// initialize counter to start at 0
 	tim -> CNT = 0;
 	
-	// Set prescale value to 72, divide clock by 72
+	// Set prescale value to 4000-1, divide clock by 4
 	tim -> PSC = prescalar;
 	
 	// Initialize the Auto reload value, double the value it takes to saturate since timer counts twice per milli
@@ -85,8 +87,19 @@ TIM_TypeDef * MStimerInit(int timer, int millis) {
 
 // Timer Delay functions
 
+void Delay(int millis) {
+	int i=0;
+	for(i=0; i<millis; ++i) {
+	SysTick -> CTRL = 0;
+	SysTick -> LOAD = 8000-1;
+	SysTick -> VAL = 0;
+	SysTick -> CTRL |= 5;
+	while (!(SysTick -> CTRL & (1<<16))) 
+	{}
+	}	
+}
 
-void Delay_Micros(int timer, int micros) {
+void Timer_Delay_Micros(int timer, int micros) {
 	TIM_TypeDef * tim = UStimerInit(timer, micros);
 
 	tim -> CR1 |= 1<<3; // enable one pulse mode
@@ -98,20 +111,8 @@ void Delay_Micros(int timer, int micros) {
 }
 
 
-// Basic delay function, uses timer 17
-void Delay(int millis) {
-	TIM_TypeDef * tim = MStimerInit(17, millis);
-	
-	tim -> CR1 |= 1<<3; // enable one pulse mode
-	
-	while(tim->CR1 & 1)
-	{}
-}
 
-
-
-// backup for basic delay function in the case of timer 17 being used for other purposes
-void Delay_Millis(int timer, int millis) {
+void Timer_Delay_Millis(int timer, int millis) {
 	TIM_TypeDef * tim = MStimerInit(timer, millis);
 	
 	tim -> CR1 |= 1<<3; // enable one pulse mode
@@ -122,6 +123,16 @@ void Delay_Millis(int timer, int millis) {
 
 
 // Timer interrupt functions
+
+
+void SysTickInterrupt(int load) {
+	__disable_irq();
+	SysTick -> CTRL = 0;
+	SysTick -> LOAD = load;
+	SysTick -> VAL = 0;
+	SysTick -> CTRL |= 7;
+	__enable_irq();
+}
 
 
 void USInterrupt(int timer, int micros) {
@@ -173,6 +184,10 @@ void Timer_irq_flag(int timer) {
 // Timer interrupt Handeler Functions
 
 /*
+
+void SysTick_Handler(void) {
+	//do something
+}
 
 void TIM1_UP_TIM16_IRQHandler() {
 	Timer_irq_flag(1);
