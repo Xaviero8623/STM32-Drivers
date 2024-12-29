@@ -5,6 +5,6 @@ Developed bare metal drivers for the STM32F3 and STM32F4 series of microcontroll
 -	Full control of GPIO pins and Alternate function remapping
 -	Easy initialization and use of external and timer-based interrupts
 -	Advanced control of all timers in the microcontroller including functions for
--	microsecond and millisecond delays (default delay uses the system timer but any timer can be used for delays)
+-	microsecond and millisecond delays (default delay uses the SysTick timer but any timer can be used for delays)
 -	compare operations to trigger events
 -	PWM output
