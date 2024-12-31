@@ -8,3 +8,5 @@ Developed bare metal drivers for the STM32F3 and STM32F4 series of microcontroll
 -	microsecond and millisecond delays (default delay uses the SysTick timer but any timer can be used for delays)
 -	compare operations to trigger events
 -	PWM output
+-	ADC configuration and reading
+-	DAC output
