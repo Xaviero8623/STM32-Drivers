@@ -16,7 +16,7 @@ void RCCPortInit(char GPIO_port) {
 
 GPIO_TypeDef * get_GPIO(char GPIO_port) {
 	GPIO_TypeDef * target_port;
-	
+	// Get GPIO address
 	switch(GPIO_port)
 	{
 		#ifdef GPIOA
@@ -65,21 +65,25 @@ void PinMode(int PortPin, char mode) {
 	
 	
 	
-	GPIO -> MODER &= ~(0x3 << pin*2);
-	GPIO -> MODER |= (mode << pin*2);
+	GPIO -> MODER &= ~(0x3 << pin*2); // clear pin mode bits
+	GPIO -> MODER |= (mode << pin*2); // enter pin mode bits
 	
 }
 
 void SetModeOutput(int PortPin) {
-	PinMode(PortPin, OUT);
+	PinMode(PortPin, OUT); // set out
 }
 
 void SetModeInput(int PortPin) {
-	PinMode(PortPin, IN);
+	PinMode(PortPin, IN); // set in
 }
 
 void SetModeAlt(int PortPin) {
-	PinMode(PortPin, AF);
+	PinMode(PortPin, AF); // set alternate function
+}
+
+void SetModeAnalog(int PortPin) {
+	PinMode(PortPin, AN); // set analog mode
 }
 
 void SetPinOutput(int PortPin, char speed) {
@@ -98,8 +102,8 @@ void SetPinInput(int PortPin, char speed, char pullres) {
 	char port = PortPin / 16; // port
 	char pin = PortPin % 16; // pin number
 	GPIO_TypeDef * GPIO = get_GPIO(port); // extract port address
-	RCCPortInit(port);
-	SetModeInput(PortPin);
+	RCCPortInit(port); // initialize the port
+	SetModeInput(PortPin); // set pin as input
 	
 	GPIO -> OTYPER &= ~(0b1<<pin); // set pin as push pull
 	
@@ -107,7 +111,7 @@ void SetPinInput(int PortPin, char speed, char pullres) {
 	GPIO -> OSPEEDR |= (speed<<pin*2); // set pin as high speed
 	
 	GPIO -> PUPDR &= ~(0x3<<pin*2); //resetting bits
-	GPIO -> PUPDR |= (pullres<<pin*2);
+	GPIO -> PUPDR |= (pullres<<pin*2); // set as pullup, pulldown, or neither
 }
 
 void SetPinAlt(int PortPin, char speed, char AlternateMapping) {
@@ -122,20 +126,28 @@ void SetPinAlt(int PortPin, char speed, char AlternateMapping) {
 	GPIO -> OSPEEDR |= (speed<<pin*2); // set pin as high speed
 	
 	if (pin < 8) {
-		GPIO -> AFR[0] |= AlternateMapping << pin * 4;
+		GPIO -> AFR[0] |= AlternateMapping << pin * 4; // map alternative function
 	} else {
-		GPIO -> AFR[1] |= AlternateMapping << (pin - 8) * 4;
+		GPIO -> AFR[1] |= AlternateMapping << (pin - 8) * 4; // map alternative function
 	}
 }
+void SetPinAnalog(int PortPin) {
+	char port = PortPin / 16; // port
+	//char pin = PortPin % 16; // pin number
+	//GPIO_TypeDef * GPIO = get_GPIO(port); // extract port address
+	RCCPortInit(port); // initialize port clock
+	SetModeAnalog(PortPin); // set pin as an  output
+}
+
 
 void PinWrite(int PortPin, char state) {
 	char port = PortPin / 16; // port
 	char pin = PortPin % 16; // pin number
 	GPIO_TypeDef * GPIO = get_GPIO(port); // extract port address
 	if (state) {
-		GPIO -> BSRR = (1<<pin);
+		GPIO -> BSRR = (1<<pin); // use BSRR register to write to ODR
 	} else {
-		GPIO -> BSRR = (1<<(pin+16));
+		GPIO -> BSRR = (1<<(pin+16)); // ^^^^
 	}
 }
 
@@ -152,7 +164,7 @@ char PinRead(int PortPin) {
 }
 
 void PinToggle(int PortPin) {	
-	PinRead(PortPin) ? PinWrite(PortPin, OFF) : PinWrite(PortPin, ON);
+	PinRead(PortPin) ? PinWrite(PortPin, OFF) : PinWrite(PortPin, ON); // toggle pin based on current state
 }
 
 // Interrupt Initialize functions
@@ -204,7 +216,7 @@ void IRQEdgeInit(int PortPin, char Edge, char pullconfig) {
 }
 
 void SetRisingIRQ(int PortPin, char pullconfig) {
-	IRQEdgeInit(PortPin, Rising, pullconfig);
+	IRQEdgeInit(PortPin, Rising, pullconfig); 
 }
 
 void SetFallingIRQ(int PortPin, char pullconfig) {
@@ -319,18 +331,3 @@ void StopIRQ(int PortPin) {
 
 	
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
