@@ -1,7 +1,3 @@
-/* 
-	Universal GPIO and Interrupt drivers for learning purposes and future use
-	By Xavier Onwu
-*/
 
 
 #include "stm32f3xx.h"
