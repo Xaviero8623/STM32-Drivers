@@ -10,3 +10,4 @@ Developed bare metal drivers for the STM32F3 series of microcontrollers. The dri
 -	PWM output
 -	ADC configuration and reading
 -	DAC output
+-	UART communication at 9600 Baud
