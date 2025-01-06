@@ -24,7 +24,7 @@ void UART1_Send(char msg) {
 
 char UART1_Receive(void) {
 	char msg = 0;
-	msg = USART1 -> RDR;
+	msg = USART1 -> RDR; // load value into char
 	return msg;
 }
 
@@ -51,7 +51,7 @@ void UART2_Send(char msg) {
 
 char UART2_Receive(void) {
 	char msg = 0;
-	msg = USART2 -> RDR;
+	msg = USART2 -> RDR; // load value into char
 	return msg;
 }
 
@@ -78,6 +78,6 @@ void UART3_Send(char msg) {
 
 char UART3_Receive(void) {
 	char msg = 0;
-	msg = USART3 -> RDR;
+	msg = USART3 -> RDR; // load value into char
 	return msg;
 }
